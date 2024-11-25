@@ -12,4 +12,8 @@ It also creates a subdirectory /resources, where the SSH key pair is stored, ena
 Configuration Files:
 
 Key configuration files for the server are located in /opt/ibm/wlp/usr/servers/controller/server.xml.
-This project is designed to simplify the deployment and management of application servers in a containerized environment. "**For testing purposes."**
+This project is designed to simplify the deployment and management of application servers in a containerized environment. 
+
+Dynamically sets the hostname in the collective-create-include.xml file, using the hostname of the host where the container is running and add this file in to the server.xml
+
+"**For testing purposes."**
