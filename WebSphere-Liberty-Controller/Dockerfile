@@ -1,35 +1,33 @@
-# Use the base image WebSphere Liberty
 FROM websphere-liberty:latest
 
-MAINTAINER robert.pesout@tietoevry.com
+LABEL maintainer="robert.pesout@tietoevry.com"
 
 USER root
 
-# Set the working directory
-WORKDIR /tmp
+WORKDIR /opt/ibm/wlp/bin
 
-# Copy necessary files
-COPY entrypoint.sh /tmp
+COPY entrypoint.sh /tmp/
 
-# Install collective controller and configure server
-RUN apt-get update && apt-get install -y vim && \
+RUN apt-get update && apt-get install -y vim && apt-get install -y openssh-server openssh-client && apt-get install -y iputils-ping telnet net-tools && \
     ./installUtility install collectivecontroller-1.0 --acceptLicense && \
-    mkdir -p /.ssh && touch /.ssh/authorized_keys && \
-    chmod 700 /.ssh && chmod 777 /.ssh/authorized_keys && \
+    mkdir -p /.ssh && touch /.ssh/authorized_keys && mkdir -p /var/run/sshd && \
+    sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config && \
+    chmod 660 /.ssh/authorized_keys && \
+    chown -R 1001:0 /.ssh && \
     ./server create controller && \
-    chmod +x /tmp/entrypoint.sh && chown 1001:0 /tmp/entrypoint.sh
+    chmod +x /tmp/entrypoint.sh && \
+    chown -R 1001:0 /tmp/entrypoint.sh && \
+    ln -s /opt/ibm/wlp/usr/servers/controller /config && \
+    chmod -R g+rw /logs /opt/ibm/wlp/usr /opt/ibm/wlp/output /etc/wlp && \
+    chown -R 1001:0 /logs /opt/ibm/wlp/usr /opt/ibm/wlp/output /etc/wlp && \
+    apt-get clean && rm -rf /var/lib/apt/lists/* && usermod --shell /bin/bash default && usermod -aG sudo default
 
-# Copy server configuration
 COPY --chown=1001:0 server.xml /opt/ibm/wlp/usr/servers/controller/
 
-# Switch to non-root user
-USER 1001
+USER default
 
-# Expose necessary ports
-EXPOSE 9080 9443
-
-# Set entrypoint
+# Nastavení entrypoint skriptu
 ENTRYPOINT ["/tmp/entrypoint.sh"]
 
-# Start server
-CMD ["/opt/ibm/wlp/bin/server", "start", "controller"]
+# Otevření potřebných portů
+EXPOSE 9080 9443 22 2222
