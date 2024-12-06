@@ -1,13 +1,23 @@
 #!/bin/bash
 
-# Start the server
-/opt/ibm/wlp/bin/server start controller
+echo "----------Starting server----------"
+/opt/ibm/wlp/bin/server start controller 
 
-# Spustit kolektivní příkaz
-collective create controller --keystorePassword=password123 --hostName=$HOSTNAME
+if [[ ! -e /opt/ibm/wlp/usr/servers/controller/resources || ! -e /opt/ibm/wlp/usr/servers/controller/collective-create-include.xml ]]; then
+    echo "----------Running collective command----------"
+#    /opt/ibm/wlp/bin/collective create controller --keystorePassword=password123 --createConfigFile=/opt/ibm/wlp/usr/servers/controller/ --hostName=websphere-liberty-controller
+else
+    echo "----------Files exist, skipping collective create command----------"
+fi
 
-# Upravit soubor pomocí sed
-sed -i "s/<variable name=\"defaultHostName\" value=\"[^\"]*\" \/>/<variable name=\"defaultHostName\" value=\"$HOSTNAME\" \/>/" /opt/ibm/wlp/usr/servers/controller/collective-create-include.xml
+echo "----------Stopping server----------"
+/opt/ibm/wlp/bin/server stop controller 
 
-# Udržet kontejner běžící
-tail -f /logs/messages.log
+mkdir -p /controller
+
+#Symbolic link
+echo "----------Creating symbolic link----------"
+ln -s /opt/ibm/wlp/usr/servers/controller /controller
+
+echo "----------Starting server----------"
+/opt/ibm/wlp/bin/server start controller && tail -f /logs/messages.log
