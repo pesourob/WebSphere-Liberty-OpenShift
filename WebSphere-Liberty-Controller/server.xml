@@ -1,0 +1,36 @@
+<server description="controller">
+    
+   <!-- Enable features -->
+   <featureManager>
+      <feature>adminCenter-1.0</feature>
+      <feature>collectiveController-1.0</feature>
+      <feature>websocket-1.1</feature>
+      <feature>restConnector-1.0</feature>
+      <feature>localConnector-1.0</feature>
+   </featureManager>
+    
+    <!-- Define an Administrator and non-Administrator -->
+   <basicRegistry id="basic">
+      <user name="admin" password="password123" />
+      <user name="nonadmin" password="nonadminpwd" />
+   </basicRegistry>
+
+   <remoteFileAccess> 
+      <writeDir>${server.config.dir}</writeDir> 
+   </remoteFileAccess> 
+    
+   <!-- Assign 'admin' to Administrator -->
+   <administrator-role>
+      <user>admin</user>
+   </administrator-role>
+
+   <keyStore id="defaultKeyStore" password="password123" />
+
+   <httpEndpoint id="defaultHttpEndpoint"
+                 host="*"
+                 httpPort="9080"
+                 httpsPort="9443" />
+
+   <include location="${server.config.dir}/collective-create-include.xml" />
+
+</server>
