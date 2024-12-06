@@ -11,7 +11,6 @@ COPY entrypoint.sh /tmp/
 RUN apt-get update && apt-get install -y vim && \
     ./installUtility install collectivecontroller-1.0 --acceptLicense && \
     mkdir -p /.ssh && touch /.ssh/authorized_keys && mkdir -p /var/run/sshd && \
-    sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config && \
     chmod 660 /.ssh/authorized_keys && \
     chown -R 1001:0 /.ssh && \
     ./server create controller && \
@@ -20,7 +19,7 @@ RUN apt-get update && apt-get install -y vim && \
     ln -s /opt/ibm/wlp/usr/servers/controller /config && \
     chmod -R g+rw /logs /opt/ibm/wlp/usr /opt/ibm/wlp/output /etc/wlp && \
     chown -R 1001:0 /logs /opt/ibm/wlp/usr /opt/ibm/wlp/output /etc/wlp && \
-    apt-get clean && rm -rf /var/lib/apt/lists/* 
+    apt-get clean && rm -rf /var/lib/apt/lists/* && usermod --shell /bin/bash default && usermod -aG sudo default
 
 COPY --chown=1001:0 server.xml /opt/ibm/wlp/usr/servers/controller/
 
