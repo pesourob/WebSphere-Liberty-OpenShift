@@ -11,7 +11,7 @@
     
     <!-- Define an Administrator and non-Administrator -->
    <basicRegistry id="basic">
-      <user name="admin" password="password123" />
+      <user name="default" password="password123" />
       <user name="nonadmin" password="nonadminpwd" />
    </basicRegistry>
 
@@ -21,7 +21,7 @@
     
    <!-- Assign 'admin' to Administrator -->
    <administrator-role>
-      <user>admin</user>
+      <user>default</user>
    </administrator-role>
 
    <keyStore id="defaultKeyStore" password="password123" />
