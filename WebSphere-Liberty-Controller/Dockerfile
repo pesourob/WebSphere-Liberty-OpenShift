@@ -24,7 +24,7 @@ RUN apt-get update && apt-get install -y vim && apt-get install -y openssh-serve
 
 COPY --chown=1001:0 server.xml /opt/ibm/wlp/usr/servers/controller/
 
-USER default
+#USER default
 
 # Nastavení entrypoint skriptu
 ENTRYPOINT ["/tmp/entrypoint.sh"]
