@@ -8,9 +8,10 @@ WORKDIR /opt/ibm/wlp/bin
 
 COPY entrypoint.sh /tmp/
 
-RUN apt-get update && apt-get install -y vim && \
+RUN apt-get update && apt-get install -y vim && apt-get install -y openssh-server openssh-client && apt-get install -y iputils-ping telnet net-tools && \
     ./installUtility install collectivecontroller-1.0 --acceptLicense && \
     mkdir -p /.ssh && touch /.ssh/authorized_keys && mkdir -p /var/run/sshd && \
+    sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config && \
     chmod 660 /.ssh/authorized_keys && \
     chown -R 1001:0 /.ssh && \
     ./server create controller && \
@@ -29,4 +30,4 @@ USER default
 ENTRYPOINT ["/tmp/entrypoint.sh"]
 
 # Otevření potřebných portů
-EXPOSE 9080 9443 
+EXPOSE 9080 9443 22 2222
